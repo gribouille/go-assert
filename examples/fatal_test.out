@@ -1,0 +1,12 @@
+=== RUN   TestFatal
+--- FAIL: TestFatal (0.00s)
+	assert.go:42: Equal failed with fatal
+		Exp: not
+		Got: equal
+=== RUN   TestFatalEnv
+--- FAIL: TestFatalEnv (0.00s)
+	assert.go:42: Equal failed with fatal
+		Exp: not
+		Got: equal
+FAIL
+FAIL	command-line-arguments	0.001s
