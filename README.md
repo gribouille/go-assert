@@ -1,6 +1,6 @@
 # go-assert
 
-Simple and no intrusive Go test library ([documentation]()).
+Simple and no intrusive Go test library ([documentation](https://godoc.org/github.com/gribouille/go-assert)).
 
 ## Getting started
 
@@ -140,7 +140,7 @@ Customize the behavior with environment variables or with custom constructor:
 a := T.NewCustom(t, true, true)
 ```
 
-See more details in the [examples](./examples) and in the [documentation]().
+See more details in the [examples](./examples) and in the [documentation](https://godoc.org/github.com/gribouille/go-assert).
 
 ## Tests
 
