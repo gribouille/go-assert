@@ -1,10 +1,14 @@
 # go-assert
 
-Simple and no intrusive Go test library ([documentation](https://godoc.org/github.com/gribouille/go-assert)).
+[![Build Status](https://travis-ci.org/gribouille/go-assert.svg?branch=master)](https://travis-ci.org/gribouille/go-assert)
+
+Simple and no intrusive Go test library.
+
+[Documentation](https://godoc.org/github.com/gribouille/go-assert).
 
 ## Getting started
 
-Install the library:
+Install the library (required Go 1.10 or superior):
 
 ```txt
 go get -u github.com/gribouille/go-assert
