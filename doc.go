@@ -9,7 +9,7 @@ Use go get tool:
 
 Or dep tool:
 
-	dep -add github.com/gribouille/go-assert
+	dep ensure -add github.com/gribouille/go-assert
 
 
 Behavior
@@ -23,13 +23,14 @@ with the template.
 
 You could customize the behavior of the library with the environment variables:
 
-	GO_ASSERT_STACK: show the stacktrace if a test fails
-
-	GO_ASSERT_FATAL: uses t.Fatal for the errors
-
-	GO_ASSERT_TMP_DISABLE: disable the deletion of temporary directory with ItTmp and ItEnv
+	- GO_ASSERT_STACK: show the stacktrace if the test fails
+	- GO_ASSERT_FATAL: uses fatal errors
+	- GO_ASSERT_TMP_DISABLE: disable the deletion of temporary directory with ItTmp and ItEnv
+	- GO_ASSERT_OS: test for a specific OS (the possible values are similar to runtime.GOOS)
 
 or with the NewCustom constructor.
+
+	a := T.NewCustom(t, true, false)
 
 
 Examples

@@ -10,6 +10,10 @@ Install the library:
 go get -u github.com/gribouille/go-assert
 ```
 
+```txt
+dep ensure -add github.com/gribouille/go-assert
+```
+
 Create a test file:
 
 ```go
@@ -60,7 +64,7 @@ Add custom messages if the assertion failed:
 a.
   Equal("a", "b"). // no message
   Equal("a", "b", "a is different of b").
-  Equal("a", "b", "%s is different of %d", "a", "b")
+  Equal("a", "b", "%s is different of %s", "a", "b")
 ```
 
 Many utils comparison functions:
@@ -152,7 +156,7 @@ go test -v .
 
 ## TODO
 
-- [ ] Improve the documentation
+- [x] Improve the documentation
 - [ ] Add net functions
 
 ## References

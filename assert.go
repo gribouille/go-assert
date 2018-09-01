@@ -14,7 +14,7 @@ import (
 	"text/template"
 )
 
-// Assert wraps the standard testing.T.
+// Assert wraps the standard testing.T structure.
 type Assert struct {
 	t     *testing.T
 	stack bool
@@ -27,9 +27,11 @@ func (a *Assert) copy(t *testing.T) *Assert {
 }
 
 // New creates a new Assert object.
+//
 // Uses the environments variables to customize the behavior:
-// - GO_ASSERT_STACK: each error show the stack trace
-// - GO_ASSERT_FATAL: each assert uses fatal function if it is failed.
+// 	- GO_ASSERT_STACK: show the stacktrace if the test fails
+// 	- GO_ASSERT_FATAL: uses fatal errors
+// 	- GO_ASSERT_OS: test for a specific OS (the possible values are similar to runtime.GOOS)
 func New(t *testing.T) *Assert {
 	s := os.Getenv("GO_ASSERT_STACK")
 	stack := false
@@ -49,6 +51,9 @@ func New(t *testing.T) *Assert {
 }
 
 // NewCustom is similar to New but not uses the environment variables.
+//
+// If stack is true then the stacktrace is showed; if fatal is true then uses
+// the fatal errors.
 func NewCustom(t *testing.T, fatal, stack bool) *Assert {
 	fn := t.Errorf
 	if fatal {
@@ -68,29 +73,6 @@ func (a *Assert) assert(fn func()) *Assert {
 	return a
 }
 
-// SetStack sets to true if the stacktrace must be showed after an error.
-func (a *Assert) SetStack(v bool) *Assert {
-	a.stack = v
-	return a
-}
-
-// SetFatal sets to true if the assert must use the fatal function.
-func (a *Assert) SetFatal(v bool) *Assert {
-	fn := a.t.Errorf
-	if v {
-		fn = a.t.Fatalf
-	}
-	a.as = fn
-	return a
-}
-
-// SetOS specifies if the test is operating system dependant. The possible value
-// is similar to the value of runtime.GOOS.
-func (a *Assert) SetOS(v string) *Assert {
-	a.os = v
-	return a
-}
-
 // errorMessage is an helper to show homogeneous messages.
 func (a *Assert) errorMessage(f string, args ...interface{}) func(...interface{}) *Assert {
 	return func(msg ...interface{}) *Assert {
@@ -101,6 +83,30 @@ func (a *Assert) errorMessage(f string, args ...interface{}) func(...interface{}
 		a.as(m)
 		return a
 	}
+}
+
+// SetStack sets to true if the stacktrace must be showed after an error.
+func (a *Assert) SetStack(v bool) *Assert {
+	a.stack = v
+	return a
+}
+
+// SetFatal sets to true if the assert must use the Fatal method.
+func (a *Assert) SetFatal(v bool) *Assert {
+	fn := a.t.Errorf
+	if v {
+		fn = a.t.Fatalf
+	}
+	a.as = fn
+	return a
+}
+
+// SetOS specifies if the test is operating system dependant.
+//
+// The possible values are similar to the values of runtime.GOOS.
+func (a *Assert) SetOS(v string) *Assert {
+	a.os = v
+	return a
 }
 
 // Skip the test.
@@ -118,6 +124,14 @@ func (a *Assert) It(msg string, fn func(*Assert)) *Assert {
 }
 
 // Equal assertion.
+//
+// The assertion function can add an optional custom error message:
+// 	a.Equal("a", "b"). // no message
+// 	a.Equal("a", "b", "a is different of b").
+// 	a.Equal("a", "b", "%s is different of %s", "a", "b")
+//
+// The assertion function can be chained:
+// 	a.Nil(...).Equal(...).True(...)
 func (a *Assert) Equal(exp, got interface{}, msg ...interface{}) *Assert {
 	return a.assert(func() {
 		if exp != got {
@@ -162,7 +176,7 @@ func (a *Assert) EqualDeep(exp, got interface{}, msg ...interface{}) *Assert {
 	})
 }
 
-// NotEqualDeep inverse of EqualDeep.
+// NotEqualDeep is the inverse of EqualDeep.
 func (a *Assert) NotEqualDeep(exp, got interface{}, msg ...interface{}) *Assert {
 	return a.assert(func() {
 		if reflect.DeepEqual(exp, got) {
@@ -171,7 +185,7 @@ func (a *Assert) NotEqualDeep(exp, got interface{}, msg ...interface{}) *Assert 
 	})
 }
 
-// EqualSlice is the equality assertion for the generic slice.
+// EqualSlice compares two slices of interface{}.
 func (a *Assert) EqualSlice(exp, got []interface{}, msg ...interface{}) *Assert {
 	return a.assert(func() {
 		if len(exp) != len(got) {
@@ -191,7 +205,13 @@ func (a *Assert) EqualSlice(exp, got []interface{}, msg ...interface{}) *Assert 
 	})
 }
 
-// EqualStringSlice is the equality assertion for the string slice.
+// EqualStringSlice compares tow slices of strings.
+//
+// If the assertion fails then a message shows the first differences:
+// 	Error:
+// 	  Exp: [aaa bbb ccc ddd]
+// 	  Got: [aaa bbc ccc ddd]
+// 	   ┗━━━━━━━━━┛
 func (a *Assert) EqualStringSlice(exp, got []string, msg ...interface{}) *Assert {
 	return a.assert(func() {
 		if len(exp) != len(got) {
@@ -245,6 +265,11 @@ func (a *Assert) NotNil(v interface{}, msg ...interface{}) *Assert {
 }
 
 // Error message assertion.
+//
+// Example:
+// 	file := "/file/not/exist"
+//	_, err := ioutil.ReadFile(file)
+// 	a.Error(err, "open %s: no such file or directory", file)
 func (a *Assert) Error(err error, errFormat string, errA ...interface{}) *Assert {
 	return a.assert(func() {
 		exp := fmt.Sprintf(errFormat, errA...)
@@ -259,6 +284,9 @@ func (a *Assert) Error(err error, errFormat string, errA ...interface{}) *Assert
 }
 
 // Match a string to a regex expression.
+//
+// Example:
+// 	a.Match(`^[a-z]+\[[0-9]+\]$`, "adam[23]")
 func (a *Assert) Match(pattern, s string, msg ...interface{}) *Assert {
 	return a.assert(func() {
 		m, err := regexp.MatchString(pattern, s)
@@ -282,7 +310,16 @@ func (a *Assert) EqualFile(got string, filename string, msg ...interface{}) *Ass
 	})
 }
 
-// EqualTemplate is similar to EqualFile but the file can be a template. The spaces are trim.
+// EqualTemplate is similar to EqualFile but the file can be a template. The spaces are trimed.
+// Example:
+// 	data := struct {
+// 		Version string
+// 		Authors []string
+// 	}{
+// 		Version: "2.0",
+// 		Authors: []string{"Bob Leponge", "Mr. Krabs"},
+// 	}
+// 	a.EqualTemplate(got, "testdata/version.tpl", data)
 func (a *Assert) EqualTemplate(got string, filename string, data interface{}, msg ...interface{}) *Assert {
 	return a.assert(func() {
 		tpl, err := template.ParseFiles(filename)
@@ -327,8 +364,14 @@ func (a *Assert) NotExists(pth string, msg ...interface{}) *Assert {
 
 // ItTmp creates a sub test with a temporary directory. This directory is clean
 // up after the test.
+//
 // For debugging, the deletion of temporary folder can be disable with the
 // environment variable GO_ASSERT_TMP_DISABLE=1.
+//
+// Example:
+// 	a.ItTmp("Sub test 1 with temp dir", func(a *T.Assert, dir string) {
+// 		// dir is the temporary directory
+// 	})
 func (a *Assert) ItTmp(msg string, fn func(*Assert, string)) *Assert {
 	a.t.Run(msg, func(t *testing.T) {
 		tmpDir(func(dir string) {
@@ -345,6 +388,15 @@ type Copy struct {
 
 // ItEnv is similar to ItTmp but it copies the files or the folders in the
 // temporary directory.
+//
+// Example:
+// 	T.New(t).ItEnv("Sub test 1 with temp dir",
+// 		T.Copy{"testdata/a", "a"},
+// 		T.Copy{"testdata/version.tpl", "version.tpl"},
+// 		T.Copy{"testdata/ipsum.txt", "a/ipsum.txt"},
+// 	)(func(a *T.Assert, dir string) {
+// 	// ...
+// 	})
 func (a *Assert) ItEnv(msg string, copies ...Copy) func(func(*Assert, string)) *Assert {
 	return func(fn func(*Assert, string)) *Assert {
 		a.t.Run(msg, func(t *testing.T) {
@@ -361,8 +413,15 @@ func (a *Assert) ItEnv(msg string, copies ...Copy) func(func(*Assert, string)) *
 	}
 }
 
-// Capture the messages sends to the standard output and the standard error of
-// the function.
+// Capture the messages sends to the standard output and the standard error of the function.
+//
+// Example:
+// 	T.New(t).Capture("Sub test capture", func() {
+// 		fmt.Fprintf(os.Stdout, "Hello")
+// 		fmt.Fprintf(os.Stderr, "World")
+// 	}, func(a *T.Assert, stdout, stderr string) {
+// 		a.Equal("Hello", stdout).Equal("World", stderr)
+// 	})
 func (a *Assert) Capture(msg string, act func(), fn func(*Assert, string, string)) *Assert {
 	a.t.Run(msg, func(t *testing.T) {
 		stdOut, stdErr := captureOutput(act)
@@ -372,7 +431,7 @@ func (a *Assert) Capture(msg string, act func(), fn func(*Assert, string, string
 }
 
 // Crash is similar to Capture but the function should exit the program too.
-// The assertion captures the return code.
+// The assertion captures the return code too.
 func (a *Assert) Crash(msg string, act func(), fn func(*Assert, int, string, string)) *Assert {
 	a.t.Run(msg, func(t *testing.T) {
 		rc, stdOut, stdErr := crashTest(t, act)

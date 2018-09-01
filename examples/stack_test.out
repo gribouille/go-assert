@@ -1,1 +1,1 @@
-^\=\=\= RUN   TestStack\ngoroutine \d \[running\]:\nruntime/debug.Stack[\S\s]*assert.go:39: Equal failed and show stack[\S\s]*FAIL	command-line-arguments	0.00\ds\n$
+^\=\=\= RUN   TestStack\ngoroutine \d \[running\]:\nruntime/debug.Stack[\S\s]*assert.go:41: Equal failed and show stack[\S\s]*FAIL	command-line-arguments	0.00\ds\n$
