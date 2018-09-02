@@ -1,8 +1,4 @@
-# go-assert
-
-[![Build Status](https://travis-ci.org/gribouille/go-assert.svg?branch=master)](https://travis-ci.org/gribouille/go-assert)
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/gribouille/go-assert)](https://goreportcard.com/report/github.com/gribouille/go-assert)
+# go-assert [![Build Status](https://travis-ci.org/gribouille/go-assert.svg?branch=master)](https://travis-ci.org/gribouille/go-assert) [![Go Report Card](https://goreportcard.com/badge/github.com/gribouille/go-assert)](https://goreportcard.com/report/github.com/gribouille/go-assert)
 
 Simple and no intrusive Go test library.
 
