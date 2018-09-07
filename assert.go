@@ -22,7 +22,7 @@ type Assert struct {
 	as    func(format string, args ...interface{})
 }
 
-func (a *Assert) copy(t *testing.T) *Assert {
+func (a *Assert) clone(t *testing.T) *Assert {
 	return &Assert{t, a.stack, a.os, a.as}
 }
 
@@ -118,7 +118,7 @@ func (a *Assert) Skip(args ...interface{}) *Assert {
 // It defines a new subtest.
 func (a *Assert) It(msg string, fn func(*Assert)) *Assert {
 	a.t.Run(msg, func(t *testing.T) {
-		fn(a.copy(t))
+		fn(a.clone(t))
 	})
 	return a
 }
@@ -136,6 +136,24 @@ func (a *Assert) Equal(exp, got interface{}, msg ...interface{}) *Assert {
 	return a.assert(func() {
 		if exp != got {
 			a.errorMessage("Exp: %+v\nGot: %+v\n", exp, got)(msg...)
+		}
+	})
+}
+
+// EqualFAbs compares 2 floats numbers with an absolute tolerance.
+func (a *Assert) EqualFAbs(exp, got, epsilon float64, msg ...interface{}) *Assert {
+	return a.assert(func() {
+		if !compareAbs(exp, got, epsilon) {
+			a.errorMessage("Exp: %f\nGot: %f with an absolute tolerance: %f\n", exp, got, epsilon)(msg...)
+		}
+	})
+}
+
+// EqualFRel compares 2 floats numbers with an relative tolerance.
+func (a *Assert) EqualFRel(exp, got, epsilon float64, msg ...interface{}) *Assert {
+	return a.assert(func() {
+		if !compareRel(exp, got, epsilon) {
+			a.errorMessage("Exp: %f\nGot: %f with an relative tolerance: %f\n", exp, got, epsilon)(msg...)
 		}
 	})
 }
@@ -375,7 +393,7 @@ func (a *Assert) NotExists(pth string, msg ...interface{}) *Assert {
 func (a *Assert) ItTmp(msg string, fn func(*Assert, string)) *Assert {
 	a.t.Run(msg, func(t *testing.T) {
 		tmpDir(func(dir string) {
-			fn(a.copy(t), dir)
+			fn(a.clone(t), dir)
 		})
 	})
 	return a
@@ -402,11 +420,11 @@ func (a *Assert) ItEnv(msg string, copies ...Copy) func(func(*Assert, string)) *
 		a.t.Run(msg, func(t *testing.T) {
 			tmpDir(func(dir string) {
 				for _, c := range copies {
-					if err := copy(c.Source, filepath.Join(dir, c.Dest)); err != nil {
+					if err := Cp(c.Source, filepath.Join(dir, c.Dest)); err != nil {
 						panic(err)
 					}
 				}
-				fn(a.copy(t), dir)
+				fn(a.clone(t), dir)
 			})
 		})
 		return a
@@ -425,7 +443,7 @@ func (a *Assert) ItEnv(msg string, copies ...Copy) func(func(*Assert, string)) *
 func (a *Assert) Capture(msg string, act func(), fn func(*Assert, string, string)) *Assert {
 	a.t.Run(msg, func(t *testing.T) {
 		stdOut, stdErr := captureOutput(act)
-		fn(a.copy(t), stdOut, stdErr)
+		fn(a.clone(t), stdOut, stdErr)
 	})
 	return a
 }
@@ -435,7 +453,7 @@ func (a *Assert) Capture(msg string, act func(), fn func(*Assert, string, string
 func (a *Assert) Crash(msg string, act func(), fn func(*Assert, int, string, string)) *Assert {
 	a.t.Run(msg, func(t *testing.T) {
 		rc, stdOut, stdErr := crashTest(t, act)
-		fn(a.copy(t), rc, stdOut, stdErr)
+		fn(a.clone(t), rc, stdOut, stdErr)
 	})
 	return a
 }

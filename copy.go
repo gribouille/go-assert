@@ -7,25 +7,25 @@ import (
 	"path/filepath"
 )
 
-// copy copies src to dest, doesn't matter if src is a directory or a file
-func copy(src, dest string) error {
+// Cp copies src to dest, doesn't matter if src is a directory or a file
+func Cp(src, dest string) error {
 	info, err := os.Stat(src)
 	if err != nil {
 		return err
 	}
-	return gcopy(src, dest, info)
+	return copy(src, dest, info)
 }
 
-// gcopy ...
-func gcopy(src, dest string, info os.FileInfo) error {
+// copy ...
+func copy(src, dest string, info os.FileInfo) error {
 	if info.IsDir() {
-		return dcopy(src, dest, info)
+		return copyDir(src, dest, info)
 	}
-	return fcopy(src, dest, info)
+	return copyFile(src, dest, info)
 }
 
-// fcopy ...
-func fcopy(src, dest string, info os.FileInfo) error {
+// copyFile ...
+func copyFile(src, dest string, info os.FileInfo) error {
 
 	f, err := os.Create(dest)
 	if err != nil {
@@ -47,8 +47,8 @@ func fcopy(src, dest string, info os.FileInfo) error {
 	return err
 }
 
-// dcopy ...
-func dcopy(src, dest string, info os.FileInfo) error {
+// copyDir ...
+func copyDir(src, dest string, info os.FileInfo) error {
 	if err := os.MkdirAll(dest, info.Mode()); err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func dcopy(src, dest string, info os.FileInfo) error {
 	}
 
 	for _, info := range infos {
-		if err := gcopy(
+		if err := copy(
 			filepath.Join(src, info.Name()),
 			filepath.Join(dest, info.Name()),
 			info,

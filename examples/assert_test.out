@@ -6,79 +6,79 @@
     --- PASS: TestSubTest/sub_test_2 (0.00s)
 === RUN   TestEqual
 --- FAIL: TestEqual (0.00s)
-	assert.go:41: Equal failed
-		Exp: not
-		Got: equal
-	assert.go:41: Error:
-		Exp: a
-		Got: b
-	assert.go:41: True failed
-		Not true
-	assert.go:41: False failed
-		Not false
-	assert.go:41: NotEqual failed
-		Equal: a
-	assert.go:41: EqualDeep failed
-		Exp: []string{"a", "b"}
-		Got: []string{"a", "c"}
-	assert.go:41: NotEqualDeep failed
-		Equal: []string{"a", "b"}
+    assert.go:41: Equal failed
+        Exp: not
+        Got: equal
+    assert.go:41: Error:
+        Exp: a
+        Got: b
+    assert.go:41: True failed
+        Not true
+    assert.go:41: False failed
+        Not false
+    assert.go:41: NotEqual failed
+        Equal: a
+    assert.go:41: EqualDeep failed
+        Exp: []string{"a", "b"}
+        Got: []string{"a", "c"}
+    assert.go:41: NotEqualDeep failed
+        Equal: []string{"a", "b"}
 === RUN   TestSlice
 --- FAIL: TestSlice (0.00s)
-	assert.go:41: Error:
-		Exp: [aaa bbb ccc ddd]
-		Got: [aaa bbc ccc ddd]
-		 ┗━━━━━━━━━━┛
-	assert.go:41: Error:
-		Expected size: 2, got size: 3
-	assert.go:41: Error:
-		Exp: [a c]
-		Got: [a b]
-		 ┗━━━━━━┛
+    assert.go:41: Error:
+        Exp: [aaa bbb ccc ddd]
+        Got: [aaa bbc ccc ddd]
+         ┗━━━━━━━━━━┛
+    assert.go:41: Error:
+        Expected size: 2, got size: 3
+    assert.go:41: Error:
+        Exp: [a c]
+        Got: [a b]
+         ┗━━━━━━┛
 === RUN   TestError
 --- FAIL: TestError (0.00s)
-	assert.go:41: Error:
-		3 is not a nullable value
-	assert.go:41: Error:
-		"ok" is not a nullable value
+    assert.go:41: Error:
+        3 is not a nullable value
+    assert.go:41: Error:
+        "ok" is not a nullable value
 === RUN   TestMatch
 --- FAIL: TestMatch (0.00s)
-	assert.go:41: Match failed
-		Regex (^[a-z]+\[[0-9]+\]$) mismatch: Job[48]
+    assert.go:41: Match failed
+        Regex (^[a-z]+\[[0-9]+\]$) mismatch: Job[48]
 === RUN   TestEqualFile
 --- FAIL: TestEqualFile (0.00s)
-	assert.go:41: EqualFile failed
-		Exp: Nulla facilisi.
-		Got: Nulla facilisy.
+    assert.go:41: EqualFile failed
+        Exp: Nulla facilisi.
+        Got: Nulla facilisy.
 === RUN   TestEqualTemplate
 --- FAIL: TestEqualTemplate (0.00s)
-	assert.go:41: EqualTemplate failed
-		Exp: Version: 3.0
-		Authors:
-		  - Bob Leponge
-		  - Mr. Krabs
-		Got: Version: 2.0
-		Authors:
-		  - Bob Leponge
-		  - Mr. Krabs
+    assert.go:41: EqualTemplate failed
+        Exp: Version: 3.0
+        Authors:
+          - Bob Leponge
+          - Mr. Krabs
+        Got: Version: 2.0
+        Authors:
+          - Bob Leponge
+          - Mr. Krabs
 === RUN   TestIsFile
 --- FAIL: TestIsFile (0.00s)
-	assert.go:41: NotExists IsFile: it is a folder
-		Not a file: /etc
-	assert.go:41: NotExists IsFile: does not exist
-		Not a file: /file/not/exist
+    assert.go:41: NotExists IsFile: it is a folder
+        Not a file: /etc
+    assert.go:41: NotExists IsFile: does not exist
+        Not a file: /file/not/exist
 === RUN   TestIsDir
 --- FAIL: TestIsDir (0.00s)
-	assert.go:41: NotExists IsDir: it is a file
-		Not a directory: /etc/passwd
-	assert.go:41: NotExists IsDir: does not exist
-		Not a directory: /dir/not/exist
+    assert.go:41: NotExists IsDir: it is a file
+        Not a directory: /etc/passwd
+    assert.go:41: NotExists IsDir: does not exist
+        Not a directory: /dir/not/exist
 === RUN   TestNotExists
 --- FAIL: TestNotExists (0.00s)
-	assert.go:41: NotExists failed: the file exists
-		Expected not exists: /etc/passwd
-	assert.go:41: NotExists failed: the folder exists
-		Expected not exists: /usr/bin/
+    assert.go:41: NotExists failed: the file exists
+        Expected not exists: /etc/passwd
+    assert.go:41: NotExists failed: the folder exists
+        Expected not exists: /usr/bin/
 === RUN   TestItTmp
 === RUN   TestItTmp/Sub_test_1_with_temp_dir
 === RUN   TestItTmp/Sub_test_2_with_temp_dir
@@ -97,12 +97,12 @@ WARNING: Temporary directory deletion canceled: /tmp/go-testing-268407324
 === RUN   TestCrash
 === RUN   TestCrash/Sub_test_crash
 --- FAIL: TestCrash (0.00s)
-	assert.go:41: No it is Ping
-		Exp: Hello
-		Got: Ping
-	assert.go:41: No it is Pong
-		Exp: World
-		Got: Pong
+    assert.go:41: No it is Ping
+        Exp: Hello
+        Got: Ping
+    assert.go:41: No it is Pong
+        Exp: World
+        Got: Pong
     --- PASS: TestCrash/Sub_test_crash (0.00s)
 FAIL
-FAIL	command-line-arguments	0.003s
+FAIL	command-line-arguments  0.003s
