@@ -23,7 +23,12 @@ type Assert struct {
 }
 
 func (a *Assert) clone(t *testing.T) *Assert {
-	return &Assert{t, a.stack, a.os, a.as}
+	fn := t.Errorf
+	f := os.Getenv("GO_ASSERT_FATAL")
+	if f == "true" || f == "t" || f == "1" {
+		fn = t.Fatalf
+	}
+	return &Assert{t, a.stack, a.os, fn}
 }
 
 // New creates a new Assert object.
